@@ -1,0 +1,13 @@
+D:\Programs\vs\mosu\mosu\obj\Debug\mosu.csproj.AssemblyReference.cache
+D:\Programs\vs\mosu\mosu\obj\Debug\mosu.Properties.Resources.resources
+D:\Programs\vs\mosu\mosu\obj\Debug\mosu.csproj.GenerateResource.cache
+D:\Programs\vs\mosu\mosu\obj\Debug\mosu.csproj.CoreCompileInputs.cache
+D:\Programs\vs\mosu\mosu\bin\Debug\mosu.exe.config
+D:\Programs\vs\mosu\mosu\bin\Debug\mosu.exe
+D:\Programs\vs\mosu\mosu\bin\Debug\mosu.pdb
+D:\Programs\vs\mosu\mosu\bin\Debug\FastReport.Compat.dll
+D:\Programs\vs\mosu\mosu\bin\Debug\FastReport.DataVisualization.dll
+D:\Programs\vs\mosu\mosu\obj\Debug\mosu.csproj.CopyComplete
+D:\Programs\vs\mosu\mosu\obj\Debug\mosu.exe
+D:\Programs\vs\mosu\mosu\obj\Debug\mosu.pdb
+D:\Programs\vs\mosu\mosu\obj\Debug\mosu.Form1.resources
