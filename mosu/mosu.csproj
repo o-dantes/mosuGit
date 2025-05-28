@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GaussSeidelOptimizer.cs" />
     <Compile Include="PIDcontroller.cs" />
     <Compile Include="HydraulicSystem.cs" />
     <Compile Include="Program.cs" />

@@ -212,6 +212,14 @@ namespace mosu
                 lblMode.Text = "Режим: Ручний";
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var optimizer = new GaussSeidelOptimizer();
+            var (u1, u2, iters) = optimizer.Minimize(2, 2); // початкові значення
+
+            Console.WriteLine($"Мінімум досягнуто при: u1 = {u1:F4}, u2 = {u2:F4} за {iters} ітерацій.");
+        }
     }
 }
 
