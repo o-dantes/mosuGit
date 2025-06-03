@@ -6,45 +6,41 @@ using System.Threading.Tasks;
 
 namespace mosu
 {
-    public class GaussSeidelOptimizer
+    public class GaussSeidelSolver
     {
-        private const double Epsilon = 1e-6;
-        private const int MaxIterations = 1000;
-
-        // Функція цілі
-        private double I(double u1, double u2)
+        public static double[] Solve(double[,] A, double[] b, double[] x0, double tolerance = 1e-6, int maxIterations = 1000)
         {
-            return 2 * u1 * u1 + 4 * u2 * u2 + u1 * u1 - 10 * u1 * u2 + u2;
-        }
+            int n = b.Length;
+            double[] x = (double[])x0.Clone();
+            double[] xPrev = new double[n];
 
-        // Часткові похідні для метода Гауса-Зейделя (градієнтний підхід)
-        public (double u1, double u2, int iterations) Minimize(double u1, double u2)
-        {
-            int iter = 0;
-            const double learningRate = 0.01;
-
-            while (iter < MaxIterations)
+            for (int iter = 0; iter < maxIterations; iter++)
             {
-                double prevU1 = u1;
-                double prevU2 = u2;
+                Array.Copy(x, xPrev, n);
 
-                // Оновлюємо u1, вважаючи u2 фіксованим
-                double gradU1 = 6 * u1 - 10 * u2;
-                u1 -= learningRate * gradU1;
+                for (int i = 0; i < n; i++)
+                {
+                    double sum = 0.0;
+                    for (int j = 0; j < n; j++)
+                    {
+                        if (j != i)
+                            sum += A[i, j] * x[j];
+                    }
+                    x[i] = (b[i] - sum) / A[i, i];
+                }
 
-                // Оновлюємо u2, вже з новим u1
-                double gradU2 = 8 * u2 - 10 * u1 + 1;
-                u2 -= learningRate * gradU2;
+                // Compute norm of the difference vector
+                double norm = 0.0;
+                for (int i = 0; i < n; i++)
+                    norm += Math.Pow(x[i] - xPrev[i], 2);
 
-                if (Math.Abs(u1 - prevU1) < Epsilon && Math.Abs(u2 - prevU2) < Epsilon)
-                    break;
-
-                iter++;
+                if (Math.Sqrt(norm) < tolerance)
+                    return x; // Converged
             }
 
-            return (u1, u2, iter);
+            return null; // Did not converge
         }
-
     }
 }
+
 

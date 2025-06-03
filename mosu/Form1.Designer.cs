@@ -41,6 +41,7 @@
             this.btnMode = new System.Windows.Forms.Button();
             this.lblMode = new System.Windows.Forms.Label();
             this.btnOptimize = new System.Windows.Forms.Button();
+            this.btnPIoptimize = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -165,22 +166,34 @@
             this.lblMode.Size = new System.Drawing.Size(42, 13);
             this.lblMode.TabIndex = 10;
             this.lblMode.Text = "Manual";
+            this.lblMode.Click += new System.EventHandler(this.lblMode_Click);
             // 
             // btnOptimize
             // 
             this.btnOptimize.Location = new System.Drawing.Point(622, 395);
             this.btnOptimize.Name = "btnOptimize";
-            this.btnOptimize.Size = new System.Drawing.Size(75, 23);
+            this.btnOptimize.Size = new System.Drawing.Size(134, 23);
             this.btnOptimize.TabIndex = 11;
-            this.btnOptimize.Text = "Optimize";
+            this.btnOptimize.Text = "Gauss-Seidel Optimize";
             this.btnOptimize.UseVisualStyleBackColor = true;
             this.btnOptimize.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // btnPIoptimize
+            // 
+            this.btnPIoptimize.Location = new System.Drawing.Point(132, 395);
+            this.btnPIoptimize.Name = "btnPIoptimize";
+            this.btnPIoptimize.Size = new System.Drawing.Size(108, 23);
+            this.btnPIoptimize.TabIndex = 12;
+            this.btnPIoptimize.Text = "PI optimization";
+            this.btnPIoptimize.UseVisualStyleBackColor = true;
+            this.btnPIoptimize.Click += new System.EventHandler(this.btnPIoptimize_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnPIoptimize);
             this.Controls.Add(this.btnOptimize);
             this.Controls.Add(this.lblMode);
             this.Controls.Add(this.btnMode);
@@ -216,6 +229,7 @@
         private System.Windows.Forms.Button btnMode;
         private System.Windows.Forms.Label lblMode;
         private System.Windows.Forms.Button btnOptimize;
+        private System.Windows.Forms.Button btnPIoptimize;
     }
 }
 

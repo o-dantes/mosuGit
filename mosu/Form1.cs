@@ -12,6 +12,10 @@ namespace mosu
         // Нове для PID і режимів
         private PIDController pid = new PIDController(10, 0.5, 1);
         private bool isAutoMode = false;
+        private double optimizedKp;
+        private double optimizedTi;
+        private bool hasOptimizedValues = false;
+
 
         // Контролі для PID
         private NumericUpDown numKp;
@@ -205,6 +209,18 @@ namespace mosu
                 btnMode.Text = "Переключити на Ручний";
                 lblMode.Text = "Режим: Авто";
                 pid.Reset(); // скидання інтегралу для уникнення насичення
+
+                // Apply optimized values if available
+                if (hasOptimizedValues)
+                {
+                    pid.Kp = optimizedKp;
+                    pid.Ki = optimizedKp / optimizedTi;
+                    pid.Kd = 0; // PI only
+
+                    numKp.Value = (decimal)optimizedKp;
+                    numKi.Value = (decimal)(optimizedKp / optimizedTi);
+                    numKd.Value = 0;
+                }
             }
             else
             {
@@ -215,10 +231,46 @@ namespace mosu
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var optimizer = new GaussSeidelOptimizer();
-            var (u1, u2, iters) = optimizer.Minimize(2, 2); // початкові значення
+            double[,] A = {
+                { 4, 1, 2 },
+                { 3, 5, 1 },
+                { 1, 1, 3 }
+    };
+            double[] b = { 4, 7, 3 };
+            double[] x0 = { 0, 0, 0 };
 
-            Console.WriteLine($"Мінімум досягнуто при: u1 = {u1:F4}, u2 = {u2:F4} за {iters} ітерацій.");
+            double[] solution = GaussSeidelSolver.Solve(A, b, x0);
+
+            if (solution != null)
+            {
+                string result = "Gauss-Seidel Solution:\n";
+                for (int i = 0; i < solution.Length; i++)
+                    result += $"x{i + 1} = {solution[i]:F6}\n";
+
+                MessageBox.Show(result, "Result");
+            }
+            else
+            {
+                MessageBox.Show("Method did not converge.", "Error");
+            }
+        }
+
+        private void lblMode_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnPIoptimize_Click(object sender, EventArgs e)
+        {
+            var optimizer = new mosu.HydraulicSystem.PIRegulatorOptimizer();
+            var (bestKp, bestTi, bestISE, bestDev) = optimizer.Optimize();
+
+            // Store optimized values
+            optimizedKp = bestKp;
+            optimizedTi = bestTi;
+            hasOptimizedValues = true;
+
+            MessageBox.Show($"Optimal Kp = {bestKp:F3}\nOptimal Ti = {bestTi:F1}\nISE = {bestISE:F5}\nMax Dev = {bestDev:F5}", "Optimization Result");
         }
     }
 }
