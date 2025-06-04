@@ -231,28 +231,24 @@ namespace mosu
 
         private void button1_Click(object sender, EventArgs e)
         {
-            double[,] A = {
-                { 4, 1, 2 },
-                { 3, 5, 1 },
-                { 1, 1, 3 }
-    };
-            double[] b = { 4, 7, 3 };
-            double[] x0 = { 0, 0, 0 };
-
-            double[] solution = GaussSeidelSolver.Solve(A, b, x0);
-
-            if (solution != null)
+            var optimizer = new GaussOptimizer((kp, ti) =>
             {
-                string result = "Gauss-Seidel Solution:\n";
-                for (int i = 0; i < solution.Length; i++)
-                    result += $"x{i + 1} = {solution[i]:F6}\n";
+                var piSim = new mosu.HydraulicSystem.PIRegulatorOptimizer();
+                var (ise, _) = piSim.Simulate(kp, ti);
+                return ise;
+            });
 
-                MessageBox.Show(result, "Result");
-            }
-            else
-            {
-                MessageBox.Show("Method did not converge.", "Error");
-            }
+            (double bestKp, double bestTi, double bestISE, int iterations) = optimizer.Optimize(1.0, 70.0);
+
+
+            optimizedKp = bestKp;
+            optimizedTi = bestTi;
+            hasOptimizedValues = true;
+
+            MessageBox.Show($"[Gauss Optimizer Result]\n" +
+                            $"Kp = {bestKp:F3}, Ti = {bestTi:F1}\n" +
+                            $"ISE = {bestISE:F5}\n" +
+                            $"Iterations = {iterations}", "Gauss Optimization");
         }
 
         private void lblMode_Click(object sender, EventArgs e)

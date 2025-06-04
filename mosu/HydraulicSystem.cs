@@ -40,8 +40,6 @@ namespace mosu
             public void DecreaseIn2() => x_in_2_0 *= 0.5;
             public void UpdateLevels(double dt)
             {
-                // Calculate flows using square root of positive pressure differences
-
                 double Q_in1 = 0;
                 if (p_in_1_0 > z1)
                     Q_in1 = alpha_in_1 * x_in_1_0 * Math.Sqrt(p_in_1_0 - z1);
@@ -60,29 +58,27 @@ namespace mosu
                 if (z2 > p_out_0)
                     Q_out = alpha_out * x_out_0 * Math.Sqrt(z2 - p_out_0);
 
-    
                 z1 += dt * (Q_in1 - Q_12) / F1;
                 z2 += dt * (Q_in2 + Q_12 - Q_out) / F2;
 
-                // Ensure levels are not negative
                 if (z1 < 0) z1 = 0;
                 if (z2 < 0) z2 = 0;
             }
-
         }
+
         public class PIRegulatorOptimizer
         {
-            public double Kp { get; private set; } = 1.17; // Initial engineering value
-            public double Ti { get; private set; } = 70.0; // Initial engineering value
+            public double Kp { get; private set; } = 1.17;
+            public double Ti { get; private set; } = 70.0;
 
             public List<double> Time = new List<double>();
             public List<double> Response = new List<double>();
             public List<double> Error = new List<double>();
 
-            private const double dt = 0.01; // Simulation step
-            private const double simTime = 10.0; // 10 seconds simulation
+            private const double dt = 0.01;
+            private const double simTime = 10.0;
 
-            private const double delay = 0.1; // 100ms delay
+            private const double delay = 0.1;
             private readonly int delaySteps = (int)(delay / dt);
 
             private double CalculateISE(List<double> errors)
@@ -100,7 +96,6 @@ namespace mosu
                 Queue<double> delayBuffer = new Queue<double>(Enumerable.Repeat(0.0, delaySteps));
 
                 double integral = 0;
-                double output = 0;
                 double plant = 0;
 
                 Time.Clear();
@@ -132,35 +127,21 @@ namespace mosu
 
             public (double Kp, double Ti, double BestISE, double BestDev) Optimize()
             {
-                double bestKp = Kp;
-                double bestTi = Ti;
-
-                double bestISE = double.MaxValue;
-                double bestDev = double.MaxValue;
-
-                double[] kpRange = { 0.5, 0.75, 1.0, 1.25, 1.5 };
-                double[] tiRange = { 50, 70, 90, 110, 130 };
-
-                foreach (var kp in kpRange)
+                var optimizer = new GaussOptimizer((kp, ti) =>
                 {
-                    foreach (var ti in tiRange)
-                    {
-                        var (ise, dev) = Simulate(kp, ti);
-                        if (ise < bestISE)
-                        {
-                            bestISE = ise;
-                            bestDev = dev;
-                            bestKp = kp;
-                            bestTi = ti;
-                        }
-                    }
-                }
+                    var result = Simulate(kp, ti);
+                    return result.ISE;
+                });
+
+                (double bestKp, double bestTi, double bestISE, int _) = optimizer.Optimize(1.0, 70.0);
 
                 Kp = bestKp;
                 Ti = bestTi;
+                double bestDev = Simulate(bestKp, bestTi).MaxDev;
+
                 return (bestKp, bestTi, bestISE, bestDev);
             }
         }
     }
-
 }
+
